@@ -1,7 +1,8 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 
 export const Styles = StyleSheet.create({
   container: {
+    paddingTop: 24,
     display: 'flex',
     flexDirection: 'column',
     paddingHorizontal: 16,
@@ -13,10 +14,17 @@ export const Styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    marginVertical: 24,
+    position: 'absolute',
+    bottom: 16,
+    zIndex: 100,
+    right: Dimensions.get('window').width / 2 - 30,
   },
   /* Extra */
   addButtonCustom: {
-    minWidth: 180,
+    minWidth: 60,
+    minHeight: 60,
+    borderRadius: 100,
+    height: 60,
+    width: 60,
   },
 });

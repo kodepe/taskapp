@@ -4,38 +4,48 @@ import {FlatList, Text, View} from 'react-native';
 import {Task} from '../../../hooks';
 import {TaskItemStyles, TaskListStyles} from './styles';
 import {Button} from '../../atoms';
+import {CheckIcon, ThreeDotsIcon} from 'native-base';
 
 interface Props {
   tasks: Task[];
-  onRemove: any;
   onUpdate: any;
 }
 
-export const TaskList = ({tasks, onRemove, onUpdate}: Props) => {
-  if (tasks) {
+export const TaskList = ({tasks, onUpdate}: Props) => {
+  if (tasks && tasks.length >= 1) {
     return (
       <View style={TaskListStyles.container}>
         <FlatList
-          ListHeaderComponent={() => <Text>{'Lista de tareas'}</Text>}
-          renderItem={({item, index}) => (
-            <View style={TaskItemStyles.container}>
-              <Text>{item.name}</Text>
-              <View style={TaskItemStyles.buttons}>
-                <Button
-                  label="U"
-                  buttonStyles={TaskItemStyles.customButtonUpdate}
-                  textStyles={TaskItemStyles.customText}
-                  onPress={() => onUpdate(item, index)}
-                />
-                <Button
-                  label="R"
-                  buttonStyles={TaskItemStyles.customButtonRemove}
-                  textStyles={TaskItemStyles.customText}
-                  onPress={() => onRemove(item.name)}
-                />
+          renderItem={({item, index}) => {
+            return (
+              <View
+                style={[
+                  TaskItemStyles.container,
+                  item.completed
+                    ? TaskItemStyles.completed
+                    : TaskItemStyles.pending,
+                ]}>
+                <View style={TaskItemStyles.texts}>
+                  <Text style={TaskItemStyles.title}>{item.name}</Text>
+                  <Text
+                    style={TaskItemStyles.description}
+                    numberOfLines={1}
+                    ellipsizeMode="tail">
+                    {item.description}
+                  </Text>
+                </View>
+                <View style={TaskItemStyles.buttons}>
+                  {item.completed && <CheckIcon />}
+                  <Button
+                    label={<ThreeDotsIcon color={'#fff'} />}
+                    buttonStyles={TaskItemStyles.customButtonUpdate}
+                    textStyles={TaskItemStyles.customText}
+                    onPress={() => onUpdate(item, index)}
+                  />
+                </View>
               </View>
-            </View>
-          )}
+            );
+          }}
           data={tasks}
           keyExtractor={item => item.name}
         />

@@ -6,29 +6,32 @@ import {Styles} from './styles';
 import {UseTaskContext} from '../../contexts';
 import {Task} from '../../hooks';
 import {TaskList} from '../../components/organisms/task-list';
+import {AddIcon} from 'native-base';
 
 export const HomePage = () => {
-  const [form, setForm] = useState<Task>({name: '', description: ''});
+  const [isAll, setIsAll] = useState('ALL');
+  const [form, setForm] = useState<Task>({
+    name: '',
+    description: '',
+    completed: false,
+  });
   const [indexSelected, setIndexSelected] = useState({
-    task: {name: '', description: ''},
+    task: {name: '', description: '', completed: false},
     index: -1,
   });
   const {tasks, addTask, removeTask, searchTask, updateTask} = UseTaskContext();
   const [isVisible, setIsVisible] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [value, setValue] = useState('');
+
+  /* Search by name */
   const handlerSearchTask = () => {
     if (searchTask) {
-      searchTask(value);
-    }
-  };
-  const handlerRemoveItem = (val: string) => {
-    if (removeTask) {
-      removeTask(val);
-      setValue('');
+      searchTask(value, false);
     }
   };
 
+  /* Add new task */
   const hanlderAdd = (val: Task) => {
     if (val && addTask && !isUpdated) {
       addTask(val);
@@ -39,6 +42,8 @@ export const HomePage = () => {
     setIsVisible(false);
     setIsUpdated(false);
   };
+
+  /* Select item to update */
   const handlerSelectUpdate = (val: Task, idx: number) => {
     setForm(val);
     setIsUpdated(true);
@@ -46,32 +51,51 @@ export const HomePage = () => {
     setIndexSelected({task: val, index: idx});
   };
 
+  /* Search wehen change input */
   useEffect(() => {
     handlerSearchTask();
   }, [value]);
+  const handlerFilterAll = (item: string) => {
+    setIsAll(item);
+    if (searchTask) {
+      searchTask(item, true);
+    }
+  };
 
   return (
     <View style={Styles.container}>
       <View style={Styles.addButton}>
         <Button
-          label="Agregar nueva tarea"
+          label={<AddIcon color={'#fff'} />}
           onPress={() => {
             setIsVisible(true);
           }}
           buttonStyles={Styles.addButtonCustom}
         />
       </View>
-      <Header value={value} onChange={setValue} />
-      <TaskList
-        tasks={tasks}
-        onRemove={handlerRemoveItem}
-        onUpdate={handlerSelectUpdate}
+
+      <Header
+        isAll={isAll}
+        action={handlerFilterAll}
+        value={value}
+        onChange={setValue}
       />
+      <TaskList tasks={tasks} onUpdate={handlerSelectUpdate} />
       <AddTaskModal
+        onComplete={(val: Task, selected: boolean) => {
+          if (removeTask) {
+            removeTask(val, selected);
+            setIsVisible(false);
+            setIsUpdated(false);
+          }
+        }}
         isUpdate={isUpdated}
         form={form}
         setForm={setForm}
-        onClose={() => setIsVisible(false)}
+        onClose={() => {
+          setIsVisible(false);
+          setIsUpdated(false);
+        }}
         isVisible={isVisible}
         onAdd={hanlderAdd}
       />

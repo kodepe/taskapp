@@ -13,7 +13,7 @@ export const AppNavigator = () => {
         <Stack.Screen
           name="Home"
           component={HomePage}
-          options={{title: 'Overview'}}
+          options={{title: 'Todo-App'}}
         />
       </Stack.Navigator>
     </NavigationContainer>

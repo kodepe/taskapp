@@ -6,8 +6,8 @@ interface ProviderProps extends PropsWithChildren {}
 interface ContextProps {
   tasks: Task[];
   addTask?: (value: Task) => void;
-  removeTask?: (id: string) => void;
-  searchTask?: (name: string) => void;
+  removeTask?: (value: Task, selected: boolean) => void;
+  searchTask?: (name: string, filter: boolean) => void;
   updateTask?: (item: Task, index: number) => void;
   initLocalData?: () => void;
 }
@@ -24,6 +24,7 @@ export const TaskProvider = ({children}: ProviderProps) => {
   useEffect(() => {
     initLocalData();
   }, []);
+
   return (
     <TaskContext.Provider
       value={{
